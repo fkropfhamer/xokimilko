@@ -11,10 +11,17 @@ class _TransmitScreenState extends State<TransmitScreen> {
   var transmits = <int>[];
   var ts = DateTime.now().millisecondsSinceEpoch;
 
+  final _scrollController = ScrollController();
+
   void a() {
-    final now = DateTime.now().millisecondsSinceEpoch;
-    transmits.add(now - ts);
-    ts = now;
+
+    setState(() {
+      final now = DateTime.now().millisecondsSinceEpoch;
+      transmits.add(now - ts);
+      ts = now;
+
+      _scrollController.animateTo(_scrollController.position.maxScrollExtent, duration: const Duration(microseconds: 500), curve: Curves.easeOut);
+    });
 
     print(transmits);
   }
@@ -30,6 +37,25 @@ class _TransmitScreenState extends State<TransmitScreen> {
         child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              SizedBox(
+                height: 50,
+               width: double.infinity,
+               child: ListView.builder(
+                 controller: _scrollController,
+                   padding: const EdgeInsets.all(8),
+                   itemCount: transmits.length,
+                   scrollDirection: Axis.horizontal,
+                   itemBuilder: (BuildContext context, int index) {
+                     final color = index % 2 == 0 ? Colors.green : Colors.grey;
+
+                     return Container(
+                       height: 50,
+                       width: transmits[index] / 10,
+                       color: color,
+                       child: Center(child: Text('${transmits[index]}')),
+                     );
+                   })
+              ),
               InkResponse(
                   onTapDown: (t) {
                     print("down");
