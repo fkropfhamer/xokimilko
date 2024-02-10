@@ -48,19 +48,18 @@ const interElement = 1 * timeUnit;
 const shortGap = 3 * timeUnit;
 const mediumGap = 5 * timeUnit;
 
-
-
-enum TransmitType {
-  pause, send
-}
+enum TransmitType { pause, send }
 
 enum TransmitClass {
-  dit, dah, interElement, shortGap, mediumGap;
+  dit,
+  dah,
+  interElement,
+  shortGap,
+  mediumGap;
 
   @override
   String toString() {
-    switch(this) {
-
+    switch (this) {
       case TransmitClass.dit:
         return '.';
       case TransmitClass.dah:
@@ -91,7 +90,7 @@ class Transmit {
     return TransmitClass.interElement;
   }
 
-  TransmitClass  _getSendClass() {
+  TransmitClass _getSendClass() {
     if (duration > dah) {
       return TransmitClass.dah;
     }
@@ -123,7 +122,8 @@ String parseWord(List<Transmit> transmits) {
   List<List<Transmit>> letters = [[]];
 
   for (Transmit t in transmits) {
-    if (t.type == TransmitType.pause && t.getClass() == TransmitClass.shortGap) {
+    if (t.type == TransmitType.pause &&
+        t.getClass() == TransmitClass.shortGap) {
       letters.add([]);
       continue;
     }
@@ -140,7 +140,8 @@ String parseMorse(List<Transmit> transmits) {
   var ts = transmits.where((t) => t.getClass() != TransmitClass.interElement);
 
   for (Transmit t in ts) {
-    if (t.type == TransmitType.pause && t.getClass() == TransmitClass.mediumGap) {
+    if (t.type == TransmitType.pause &&
+        t.getClass() == TransmitClass.mediumGap) {
       words.add([]);
       continue;
     }
@@ -166,7 +167,6 @@ class _TransmitScreenState extends State<TransmitScreen> {
   final _scrollController = ScrollController();
 
   void addTransmit(TransmitType t) {
-
     setState(() {
       final now = DateTime.now().millisecondsSinceEpoch;
       final diff = min(now - ts, 3000);
@@ -176,7 +176,8 @@ class _TransmitScreenState extends State<TransmitScreen> {
       ts = now;
       text = parseMorse(transmits);
 
-      _scrollController.animateTo(_scrollController.position.maxScrollExtent, duration: const Duration(microseconds: 500), curve: Curves.easeOut);
+      _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+          duration: const Duration(microseconds: 500), curve: Curves.easeOut);
     });
   }
 
@@ -193,25 +194,50 @@ class _TransmitScreenState extends State<TransmitScreen> {
             children: <Widget>[
               Text(text),
               SizedBox(
-                height: 50,
-               width: double.infinity,
-               child: ListView.builder(
-                 controller: _scrollController,
-                   padding: const EdgeInsets.all(8),
-                   itemCount: transmits.length,
-                   scrollDirection: Axis.horizontal,
-                   itemBuilder: (BuildContext context, int index) {
-                      final transmit = transmits[index];
-                     final color = transmit.type == TransmitType.pause ? Colors.grey : Colors.green;
+                  height: 50,
+                  width: double.infinity,
+                  child: ListView.builder(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.all(8),
+                      itemCount: transmits.length,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (BuildContext context, int index) {
+                        final transmit = transmits[index];
+                        final color = transmit.type == TransmitType.pause
+                            ? Colors.grey
+                            : Colors.green;
+                        final width = transmit.duration / 10;
 
-                     return Container(
-                       height: 50,
-                       width: transmit.duration / 10,
-                       color: color,
-                       child: Center(child: Text('${transmit.getClass()}')),
-                     );
-                   })
-              ),
+                        Widget? child;
+                        if (transmit.getClass() == TransmitClass.dit) {
+                          child = Center(
+                            child: Container(
+                                height: 5,
+                                decoration: const BoxDecoration(
+                                  color: Colors.black,
+                                  shape: BoxShape.circle,
+                                )),
+                          );
+                        }
+
+                        if (transmit.getClass() == TransmitClass.dah) {
+                          child = Center(
+                            child: Container(
+                                height: 5,
+                                width: min(width, 20),
+                                decoration: const BoxDecoration(
+                                    color: Colors.black,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5)))),
+                          );
+                        }
+
+                        return Container(
+                            height: 50,
+                            width: max(width, 5),
+                            color: color,
+                            child: child);
+                      })),
               InkResponse(
                   onTapDown: (t) {
                     addTransmit(TransmitType.pause);
