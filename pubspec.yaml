@@ -92,6 +92,8 @@ flutter:
 
 flutter_launcher_icons:
   android: "launcher_icon"
+  adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: "assets/icon/icon_adaptive.png"
   ios: true
   image_path: "assets/icon/icon.png"
   remove_alpha_ios: true
@@ -103,8 +105,8 @@ flutter_launcher_icons:
     theme_color: "#hexcode"
   windows:
     generate: true
-    image_path: "assets/icon/icon.png"
+    image_path: "assets/icon/icon_transparent_rounded.png"
     icon_size: 48 # min:48, max:256, default: 48
   macos:
     generate: true
-    image_path: "assets/icon/icon.png"
+    image_path: "assets/icon/icon_transparent_rounded.png"
