@@ -184,77 +184,86 @@ class _TransmitScreenState extends State<TransmitScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text("Transmit"),
-      ),
-      body: Center(
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(text),
-              SizedBox(
-                  height: 50,
-                  width: double.infinity,
-                  child: ListView.builder(
-                      controller: _scrollController,
-                      padding: const EdgeInsets.all(8),
-                      itemCount: transmits.length,
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (BuildContext context, int index) {
-                        final transmit = transmits[index];
-                        final color = transmit.type == TransmitType.pause
-                            ? Colors.grey
-                            : Colors.green;
-                        final width = transmit.duration / 10;
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: const Text("Transmit"),
+        ),
+        body: Center(
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(text),
+                SizedBox(
+                    height: 50,
+                    width: double.infinity,
+                    child: ListView.builder(
+                        controller: _scrollController,
+                        padding: const EdgeInsets.all(8),
+                        itemCount: transmits.length,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (BuildContext context, int index) {
+                          final transmit = transmits[index];
+                          final color = transmit.type == TransmitType.pause
+                              ? Colors.grey
+                              : Colors.green;
+                          final width = transmit.duration / 10;
 
-                        Widget? child;
-                        if (transmit.getClass() == TransmitClass.dit) {
-                          child = Center(
-                            child: Container(
-                                height: 5,
-                                decoration: const BoxDecoration(
-                                  color: Colors.black,
-                                  shape: BoxShape.circle,
-                                )),
-                          );
-                        }
-
-                        if (transmit.getClass() == TransmitClass.dah) {
-                          child = Center(
-                            child: Container(
-                                height: 5,
-                                width: min(width, 20),
-                                decoration: const BoxDecoration(
+                          Widget? child;
+                          if (transmit.getClass() == TransmitClass.dit) {
+                            child = Center(
+                              child: Container(
+                                  height: 5,
+                                  decoration: const BoxDecoration(
                                     color: Colors.black,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(5)))),
-                          );
-                        }
+                                    shape: BoxShape.circle,
+                                  )),
+                            );
+                          }
 
-                        return Container(
-                            height: 50,
-                            width: max(width, 5),
-                            color: color,
-                            child: child);
-                      })),
-              InkResponse(
-                  onTapDown: (t) {
-                    addTransmit(TransmitType.pause);
+                          if (transmit.getClass() == TransmitClass.dah) {
+                            child = Center(
+                              child: Container(
+                                  height: 5,
+                                  width: min(width, 20),
+                                  decoration: const BoxDecoration(
+                                      color: Colors.black,
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(5)))),
+                            );
+                          }
+
+                          return Container(
+                              height: 50,
+                              width: max(width, 5),
+                              color: color,
+                              child: child);
+                        })),
+                InkResponse(
+                    onTapDown: (t) {
+                      addTransmit(TransmitType.pause);
+                    },
+                    onTapUp: (t) {
+                      addTransmit(TransmitType.send);
+                    },
+                    child: Container(
+                        width: 100.0,
+                        height: 100.0,
+                        // margin: EdgeInsets.all(100.0),
+                        decoration: BoxDecoration(
+                            // color: Colors.orange,
+                            shape: BoxShape.circle,
+                            border:
+                                Border.all(width: 5.0, color: Colors.green)))),
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      transmits.clear();
+                      text = "";
+                    });
                   },
-                  onTapUp: (t) {
-                    addTransmit(TransmitType.send);
-                  },
-                  child: Container(
-                      width: 100.0,
-                      height: 100.0,
-                      // margin: EdgeInsets.all(100.0),
-                      decoration: BoxDecoration(
-                          // color: Colors.orange,
-                          shape: BoxShape.circle,
-                          border: Border.all(width: 5.0, color: Colors.green))))
-            ]),
-      ),
-    );
+                  child: const Text("Reset"),
+                )
+              ]),
+        ));
   }
 }
